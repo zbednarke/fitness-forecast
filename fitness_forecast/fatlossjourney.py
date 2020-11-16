@@ -2,6 +2,8 @@ import numpy as np
 import fitbit
 import gather_keys_oauth2 as Oauth2
 import pandas as pd 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import datetime
 
 
@@ -212,7 +214,9 @@ class FatlossJourney():
                 },
             )
             if fig is None:
-                fig = go.Figure(layout=layout)
+                fig = make_subplots(specs=[[{"secondary_y": True}]])
+                fig.layout = layout
+                # fig = go.Figure(layout=layout)
         
             plotdata = []
             time = df.time
@@ -223,12 +227,15 @@ class FatlossJourney():
             names = ["bf0 median", "bf0 conservative", "bf0 optimistic"]
             colors = ['rgba(0,0,255,1)', 'rgba(255,0,0,1)', 'rgba(0,255,0,1)']
             for data, name, color in zip(ydata, names, colors):
-                fig = fig.add_trace(go.Scatter(
-                    x=time,
-                    y=data,
-                    name=name,
-                    mode='lines',
-                    line=dict(color=color),)
+                fig = fig.add_trace(
+                        go.Scatter(
+                            x=time,
+                            y=data,
+                            name=name,
+                            mode='lines',
+                            line=dict(color=color),
+                            ),
+                        secondary_y=False,
                     )
         if show:
             fig.show(config={"displayModeBar": False, "showTips": False})
@@ -270,7 +277,8 @@ class FatlossJourney():
                     line=dict(color=color),
                     hoverinfo="skip",
                     showlegend=False
-            )
+            ),
+            secondary_y=False,
         )
         if show:
             fig.show(config={"displayModeBar": False, "showTips": False})
